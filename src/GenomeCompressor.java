@@ -40,7 +40,7 @@ public class GenomeCompressor {
 
         // Read in 32 bits (4 chars)
         String s = BinaryStdIn.readString();
-        while (s.isEmpty()) {
+        while (!s.isEmpty()) {
             char c = s.charAt(0);
             BinaryStdOut.write(map[c][0]);
             BinaryStdOut.write(map[c][1]);
