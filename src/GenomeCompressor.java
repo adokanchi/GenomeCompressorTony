@@ -23,10 +23,29 @@ public class GenomeCompressor {
      * Reads a sequence of 8-bit extended ASCII characters over the alphabet
      * { A, C, T, G } from standard input; compresses and writes the results to standard output.
      */
+    private static boolean[][] map = new boolean[85][2];
+    private static char[] map2 = new char[4];
+
+
+
     public static void compress() {
+        // 'A' --> 00
+        // 'C' --> 01
+        map['C'][1] = true;
+        // 'G' --> 10
+        map['G'][0] = true;
+        // 'T' --> 11
+        map['T'][0] = true;
+        map['T'][1] = true;
 
-        // TODO: complete the compress() method
-
+        // Read in 32 bits (4 chars)
+        String s = BinaryStdIn.readString();
+        while (s.isEmpty()) {
+            char c = s.charAt(0);
+            BinaryStdOut.write(map[c][0]);
+            BinaryStdOut.write(map[c][1]);
+            s = s.substring(1);
+        }
         BinaryStdOut.close();
     }
 
@@ -34,9 +53,15 @@ public class GenomeCompressor {
      * Reads a binary sequence from standard input; expands and writes the results to standard output.
      */
     public static void expand() {
+        map2[0] = 'A';
+        map2[1] = 'C';
+        map2[2] = 'G';
+        map2[3] = 'T';
 
-        // TODO: complete the expand() method
-
+        while (!BinaryStdIn.isEmpty()) {
+            int i = BinaryStdIn.readInt(2);
+            BinaryStdOut.write(map2[i]);
+        }
         BinaryStdOut.close();
     }
 
