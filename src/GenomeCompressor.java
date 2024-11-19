@@ -23,27 +23,25 @@ public class GenomeCompressor {
      * Reads a sequence of 8-bit extended ASCII characters over the alphabet
      * { A, C, T, G } from standard input; compresses and writes the results to standard output.
      */
-    private static boolean[][] map = new boolean[85][2];
-    private static char[] map2 = new char[4];
-
-
+    private static final int[] mapCompress = new int[85];
+    private static final char[] mapExpand = new char[4];
+    private static final int HEADER_SIZE = 8;
+    private static final int CHAR_SIZE = 2;
 
     public static void compress() {
-        // 'A' --> 00
-        // 'C' --> 01
-        map['C'][1] = true;
-        // 'G' --> 10
-        map['G'][0] = true;
-        // 'T' --> 11
-        map['T'][0] = true;
-        map['T'][1] = true;
+        mapCompress['A'] = 0b00;
+        mapCompress['C'] = 0b01;
+        mapCompress['G'] = 0b10;
+        mapCompress['T'] = 0b11;
 
-        // Read in 32 bits (4 chars)
         String s = BinaryStdIn.readString();
+        int n = s.length();
+
+        // Header
+        BinaryStdOut.write(n, HEADER_SIZE);
+
         while (!s.isEmpty()) {
-            char c = s.charAt(0);
-            BinaryStdOut.write(map[c][0]);
-            BinaryStdOut.write(map[c][1]);
+            BinaryStdOut.write(mapCompress[s.charAt(0)], CHAR_SIZE);
             s = s.substring(1);
         }
         BinaryStdOut.close();
@@ -53,14 +51,16 @@ public class GenomeCompressor {
      * Reads a binary sequence from standard input; expands and writes the results to standard output.
      */
     public static void expand() {
-        map2[0] = 'A';
-        map2[1] = 'C';
-        map2[2] = 'G';
-        map2[3] = 'T';
+        mapExpand[0b00] = 'A';
+        mapExpand[0b01] = 'C';
+        mapExpand[0b10] = 'G';
+        mapExpand[0b11] = 'T';
 
-        while (!BinaryStdIn.isEmpty()) {
-            int i = BinaryStdIn.readInt(2);
-            BinaryStdOut.write(map2[i]);
+        int length = BinaryStdIn.readInt(HEADER_SIZE);
+
+        for (int i = 0; i < length; i++) {
+            int input = BinaryStdIn.readInt(CHAR_SIZE);
+            BinaryStdOut.write(mapExpand[input]);
         }
         BinaryStdOut.close();
     }
